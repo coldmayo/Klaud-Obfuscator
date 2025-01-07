@@ -75,9 +75,8 @@ char *main_link(char *code) {
     i = 0;
 
     // Templates for function headers and footers with dynamic labels
-	char main[2000];
-	char main_temp[2000];
-    char main_temp_[2000] =
+	char temp[2000];
+    char main_temp[2000] =
     	".text\n"
         "\t.globl\tmain\n"
         "\t.type\tmain, @function\n"
@@ -90,9 +89,9 @@ char *main_link(char *code) {
         "\tmovq\t%rsp, %rbp\n"
         "\t.cfi_def_cfa_register 6\n"
         "%%s"
-        "\tcall\thidden\n"
+        "\tcall\tf__%%%%d\n"
 		"%%s"
-        "\tmovl\t$0, %%%%eax\n"
+        "\tmovl\t$0, %%%%%%%%eax\n"
         "\tpopq\t%rbp\n"
         "\t.cfi_def_cfa 7, 8\n"
         "\tret\n"
@@ -117,7 +116,8 @@ char *main_link(char *code) {
     }
     num[j] = '\0';
     sscanf(num, "%d", &func_num);
-    sprintf(main_temp, main_temp_, func_num, func_num);
+    sprintf(temp, main_temp, func_num, func_num);
+    strcpy(main_temp, temp);
     // add extra function calls
 	int before = rand() % (5+1);
 	int after = rand() % (5+1);
@@ -139,23 +139,29 @@ char *main_link(char *code) {
 		i++;
 	}
 	i = 0;
-	sprintf(main, main_temp, start, end);
+	sprintf(temp, main_temp, start, end);
+	strcpy(main_temp, temp);
+	int hidden_num = num_o_func(code);
+	
+	sprintf(temp, main_temp, hidden_num);
+	strcpy(main_temp, temp);
     char hidden_header[200];
 	int unique_label_id = num_o_func(code);
+	
 	snprintf(hidden_header, sizeof(hidden_header),
         "\t.text\n"
-        "\t.globl\thidden\n"
-        "\t.type\thidden, @function\n"
-        "hidden:\n"
+        "\t.globl\tf__%d\n"
+        "\t.type\tf__%d, @function\n"
+        "f__%d:\n"
         ".LFB%d:\n",
-        unique_label_id);
+        hidden_num, hidden_num, hidden_num, unique_label_id);
 
     char hidden_footer[200];
     snprintf(hidden_footer, sizeof(hidden_footer),
         "\t.cfi_endproc\n"
         ".LFE%d:\n"
-        "\t.size\thidden, .-hidden\n",
-        unique_label_id);
+        "\t.size\tf__%d, .-f__%d\n",
+        unique_label_id, hidden_num, hidden_num);
 
     // Copy the hidden header to the new function buffer
     strcat(new_hidden_func, hidden_header);
@@ -217,7 +223,8 @@ char *main_link(char *code) {
 		}
 		i++;
 	}
-	strcat(updated_code, main);
+	
+	strcat(updated_code, main_temp);
     // Allocate memory for the return string
     char *ret = malloc(strlen(updated_code) + 1);
     strcpy(ret, updated_code);
@@ -228,12 +235,13 @@ char *main_link(char *code) {
 int obfuscate_asm(char * file) {
 
 	char * code = read_file(file);
+	int layers = 4;
+	int i = 0;
+	while (i < layers) {
+		code = main_link(code);
+		i++;
+	}
 
-	code = gen_func(code, "\0");
-
-	code = gen_func(code, "\0");
-
-	code = main_link(code);
 	printf("%s", code);
 	write_file(file, code);
 	free(code);
