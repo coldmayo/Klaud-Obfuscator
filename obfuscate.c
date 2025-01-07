@@ -2,40 +2,12 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
-#include "utils.h"
-#include <elf.h>
+#include "includes/utils.h"
 
-char * gen_func(char * code, char * func) {
-	char func_template[2000] =
-        ".file\t\"test.c\"\n"
-        "\t.text\n"
-        "\t.globl\tf___\n"
-        "\t.type\tf___, @function\n"
-        "f___:\n"
-        ".LFB*:\n"
-        "\t.cfi_startproc\n"
-        "\tpushq\t%rbp\n"
-        "\t.cfi_def_cfa_offset 16\n"
-        "\t.cfi_offset 6, -16\n"
-        "\tmovq\t%rsp, %rbp\n"
-        "\t.cfi_def_cfa_register 6\n"
-        "\tmovl\t$0, %eax\n"
-        "\tpopq\t%rbp\n"
-        "\t.cfi_def_cfa 7, 8\n"
-        "\tret\n"
-        "\t.cfi_endproc\n"
-        ".LFE*:\n"
-        "\t.size\tf___, .-f___\n";
-        
-
-	if (func != NULL && func[0] != '\0') {
-		strcpy(func_template, func);
-	}
-	// find number of functions
-
-	int i = 0;
+int num_o_func(char * code) {
+    int i = 0;
 	int num_func = 0;
-	
+
 	while (code[i] != '\0') {
     	//printf("%c", code[i]);
 		if (code[i] == 'B' && code[i-1] == 'F' && code[i-2] == 'L' && code[i-3]=='.' && i>= 3) {
@@ -43,28 +15,49 @@ char * gen_func(char * code, char * func) {
 		}
 		i++;
 	}
+	return num_func;
+}
+
+char * gen_func(char * code, char * func) {
+	char func_template[2000] =
+        ".file\t\"test.c\"\n"
+        "\t.text\n"
+        "\t.globl\tf__%d\n"
+        "\t.type\tf__%d, @function\n"
+        "f__%d:\n"
+        ".LFB%d:\n"
+        "\t.cfi_startproc\n"
+        "\tpushq\t%rbp\n"
+        "\t.cfi_def_cfa_offset 16\n"
+        "\t.cfi_offset 6, -16\n"
+        "\tmovq\t%rsp, %rbp\n"
+        "\t.cfi_def_cfa_register 6\n"
+        "\tmovl\t$0, %%eax\n"
+        "\tpopq\t%rbp\n"
+        "\t.cfi_def_cfa 7, 8\n"
+        "\tret\n"
+        "\t.cfi_endproc\n"
+        ".LFE%d:\n"
+        "\t.size\tf__%d, .-f__%d \n";
+
+
+	if (func != NULL && func[0] != '\0') {
+		strcpy(func_template, func);
+	}
+	// find number of functions
+
+    int num_func = num_o_func(code);
 
 	// add num_func
-	i = 0;
-	int skip = 0;
-	while (func_template[i] != '\0') {
-		if (func_template[i] == '_' && func_template[i-1] == '_' && func_template[i-2] == '_' && i>= 4) {
-			func_template[i] = '0'+num_func;
-		} else if (func_template[i] == '*' && i>= 4) {
-			func_template[i] = '0'+num_func;
-			//func_template[i+1] = ' ';
-			//func_template[i+2] = ' ';
-		}
-		i++;
-	}
-
+	char result[20000];
+	sprintf(result, func_template, num_func, num_func, num_func, num_func, num_func, num_func, num_func);
 	// stick template onto the code
 
 	remove_substring(code, ".file\t\"test.c\"\n\t.text\n");
-	strcat(func_template, code);
-	//printf("%s\n", func_template);
-	char * ret = malloc(strlen(func_template)+1);
-	strcpy(ret, func_template);
+	strcat(result, code);
+	//printf("%s\n", result);
+	char * ret = malloc(strlen(result)+1);
+	strcpy(ret, result);
 	return ret;
 }
 
@@ -74,44 +67,82 @@ char *main_link(char *code) {
     int i = 0;
 
     // Buffer for the new hidden function
-    char new_hidden_func[5000] = {0};
+    char new_hidden_func[10000] = {0};
 
     // Dynamically create unique labels
-    int num_func = 0;
-    while (code[i] != '\0') {
-        if (code[i] == 'B' && code[i - 1] == 'F' && code[i - 2] == 'L' && code[i - 3] == '.' && i >= 3) {
-            num_func++;
-        }
-        i++;
-    }
-    int unique_label_id = num_func;
+    
+    
     i = 0;
 
     // Templates for function headers and footers with dynamic labels
-    char main_temp[2000] = 
+	char main[2000];
+	char main_temp[2000];
+    char main_temp_[2000] =
     	".text\n"
         "\t.globl\tmain\n"
         "\t.type\tmain, @function\n"
         "main:\n"
-        ".LFB1:\n"
+        ".LFB%d:\n"
         "\t.cfi_startproc\n"
         "\tpushq\t%rbp\n"
         "\t.cfi_def_cfa_offset 16\n"
         "\t.cfi_offset 6, -16\n"
         "\tmovq\t%rsp, %rbp\n"
         "\t.cfi_def_cfa_register 6\n"
+        "%%s"
         "\tcall\thidden\n"
-        "\tmovl\t$0, %eax\n"
+		"%%s"
+        "\tmovl\t$0, %%%%eax\n"
         "\tpopq\t%rbp\n"
         "\t.cfi_def_cfa 7, 8\n"
         "\tret\n"
         "\t.cfi_endproc\n"
-        ".LFE1:\n"
+        ".LFE%d:\n"
         "\t.size\tmain, .-main\n"
         "\t.ident\t\"GCC: (GNU) 14.2.1 20240910\"\n"
         "\t.section\t.note.GNU-stack,\"\",@progbits";
+// Find main function label #
+    int j = 0;
+    int func_num = 1;
+    char num[6];
+    while (code[i] != '\0') {
+		if (code[i] == 'm' && code[i+1] == 'a' && code[i+2] == 'i' && code[i+4] == ':') {
+			while (code[i+10+j] != ':') {
+				num[j] = code[i+10+j]+'0';
+				j++;
+			}
+			break;
+		}
+		i++;
+    }
+    num[j] = '\0';
+    sscanf(num, "%d", &func_num);
+    sprintf(main_temp, main_temp_, func_num, func_num);
+    // add extra function calls
+	int before = rand() % (5+1);
+	int after = rand() % (5+1);
+	char base[25] = "\tcall\tf__%d\n";
+	char buffer[25];
+	char start[200] = {0}; char end[200] = {0};
+	i = 0;
+
+	while (i < before) {
+		code = gen_func(code, "\0");
+		sprintf(buffer, base, rand()%(i+1)+2);
+		strcat(start, buffer);
+		i++;
+	}
+	while (i < after+before) {
+		code = gen_func(code, "\0");
+		sprintf(buffer, base, rand()%(i+1)+2);
+		strcat(end, buffer);
+		i++;
+	}
+	i = 0;
+	sprintf(main, main_temp, start, end);
     char hidden_header[200];
-    snprintf(hidden_header, sizeof(hidden_header),
+	int unique_label_id = num_o_func(code);
+	snprintf(hidden_header, sizeof(hidden_header),
         "\t.text\n"
         "\t.globl\thidden\n"
         "\t.type\thidden, @function\n"
@@ -134,9 +165,9 @@ char *main_link(char *code) {
     bool copying_main = false;
 
     // Buffers for the modified code
-    char updated_code[10000] = {0};
+    char updated_code[20000] = {0};
     strcat(updated_code, code); // Start with the original code
-
+	
     while (code[i] != '\0') {
         // Detect the start of the main function
         if (!in_main && strncmp(&code[i], ".globl\tmain", 11) == 0) {
@@ -186,7 +217,7 @@ char *main_link(char *code) {
 		}
 		i++;
 	}
-	strcat(updated_code, main_temp);
+	strcat(updated_code, main);
     // Allocate memory for the return string
     char *ret = malloc(strlen(updated_code) + 1);
     strcpy(ret, updated_code);
@@ -203,8 +234,9 @@ int obfuscate_asm(char * file) {
 	code = gen_func(code, "\0");
 
 	code = main_link(code);
-
+	printf("%s", code);
 	write_file(file, code);
+	free(code);
 	//printf("%s", code);
 	return 0;
 }

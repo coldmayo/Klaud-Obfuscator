@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "obfuscate.h"
+#include "includes/obfuscate.h"
 
 int main() {
 	system("gcc -S test.c");
