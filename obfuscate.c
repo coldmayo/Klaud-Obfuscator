@@ -3,6 +3,7 @@
 #include <string.h>
 #include <stdbool.h>
 #include "utils.h"
+#include <elf.h>
 
 char * gen_func(char * code, char * func) {
 	char func_template[2000] =
@@ -87,6 +88,28 @@ char *main_link(char *code) {
     i = 0;
 
     // Templates for function headers and footers with dynamic labels
+    char main_temp[2000] = 
+    	".text\n"
+        "\t.globl\tmain\n"
+        "\t.type\tmain, @function\n"
+        "main:\n"
+        ".LFB1:\n"
+        "\t.cfi_startproc\n"
+        "\tpushq\t%rbp\n"
+        "\t.cfi_def_cfa_offset 16\n"
+        "\t.cfi_offset 6, -16\n"
+        "\tmovq\t%rsp, %rbp\n"
+        "\t.cfi_def_cfa_register 6\n"
+        "\tcall\thidden\n"
+        "\tmovl\t$0, %eax\n"
+        "\tpopq\t%rbp\n"
+        "\t.cfi_def_cfa 7, 8\n"
+        "\tret\n"
+        "\t.cfi_endproc\n"
+        ".LFE1:\n"
+        "\t.size\tmain, .-main\n"
+        "\t.ident\t\"GCC: (GNU) 14.2.1 20240910\"\n"
+        "\t.section\t.note.GNU-stack,\"\",@progbits";
     char hidden_header[200];
     snprintf(hidden_header, sizeof(hidden_header),
         "\t.text\n"
@@ -148,15 +171,22 @@ char *main_link(char *code) {
     // Add the footer to the hidden function
     strcat(new_hidden_func, hidden_footer);
 
-    // Insert a call to hidden in the main function
-    char main_replacement[200];
-    snprintf(main_replacement, sizeof(main_replacement),
-        "\tcall\thidden\n");
-    strcat(updated_code, main_replacement);
-
     // Add the new hidden function to the end of the updated code
-    strcat(updated_code, new_hidden_func);
-
+    //strcat(new_hidden_func, updated_code);
+    char * tmp = strdup(updated_code);
+    strcpy(updated_code, new_hidden_func);
+    strcat(updated_code, tmp);
+    free(tmp);
+	// edit the main function
+	i = 0;
+	while (updated_code[i] != '\0') {
+		if (updated_code[i+14] == 'm' && updated_code[i+15] == 'a') {
+			updated_code[i] = '\0';
+			break;
+		}
+		i++;
+	}
+	strcat(updated_code, main_temp);
     // Allocate memory for the return string
     char *ret = malloc(strlen(updated_code) + 1);
     strcpy(ret, updated_code);
@@ -164,7 +194,7 @@ char *main_link(char *code) {
 }
 
 
-int obfuscate(char * file) {
+int obfuscate_asm(char * file) {
 
 	char * code = read_file(file);
 
@@ -175,6 +205,6 @@ int obfuscate(char * file) {
 	code = main_link(code);
 
 	write_file(file, code);
-	printf("%s", code);
+	//printf("%s", code);
 	return 0;
 }

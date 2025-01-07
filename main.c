@@ -5,10 +5,13 @@
 int main() {
 	system("gcc -S test.c");
 
-	obfuscate("test.s");
+	obfuscate_asm("test.s");
 
 	system("gcc -c test.s -o test.o");
-	system("gcc test.o -o test");
 
-	printf("Done\n");
+	system("gcc test.o -s -o test");
+
+	printf("Done\nTesting...\n");
+
+	system("./test");
 }

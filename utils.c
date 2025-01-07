@@ -12,7 +12,7 @@ char * read_file(char * file) {
 	char * str = malloc(size+1);
 	size_t read_sz = fread(str, 1, size, f);
 	str[size] = '\0';
-	
+	fclose(f);
 	//printf("%s", str);
 	return str;
 }
