@@ -18,9 +18,11 @@ int num_o_func(char * code) {
 	return num_func;
 }
 
-char * gen_func(char * code, char * func) {
+char * gen_func(char * file_name, char * code, char * func) {
+	char str[70] = ".file\t\"%s\"\n\t.text\n";
+	char result[20000];
 	char func_template[2000] =
-        ".file\t\"test.c\"\n"
+        ".file\t\"%s\"\n"
         "\t.text\n"
         "\t.globl\tf__%d\n"
         "\t.type\tf__%d, @function\n"
@@ -39,8 +41,10 @@ char * gen_func(char * code, char * func) {
         "\t.cfi_endproc\n"
         ".LFE%d:\n"
         "\t.size\tf__%d, .-f__%d \n";
-
-
+	//printf("%s\n", file_name);
+	//sprintf(result, func_template, file_name);
+	//printf("%s\n", result);
+	//strcpy(func_template, result);
 	if (func != NULL && func[0] != '\0') {
 		strcpy(func_template, func);
 	}
@@ -49,11 +53,12 @@ char * gen_func(char * code, char * func) {
     int num_func = num_o_func(code);
 
 	// add num_func
-	char result[20000];
-	sprintf(result, func_template, num_func, num_func, num_func, num_func, num_func, num_func, num_func);
+	
+	sprintf(result, func_template, file_name, num_func, num_func, num_func, num_func, num_func, num_func, num_func);
 	// stick template onto the code
-
-	remove_substring(code, ".file\t\"test.c\"\n\t.text\n");
+	sprintf(str, str, file_name);
+	remove_substring(code, str);
+	//printf("%s\n", result);
 	strcat(result, code);
 	//printf("%s\n", result);
 	char * ret = malloc(strlen(result)+1);
@@ -63,7 +68,7 @@ char * gen_func(char * code, char * func) {
 
 // goal of this function is to take the main function and put it into a hidden function
 
-char *main_link(char *code) {
+char *main_link(char * file_name, char *code) {
     int i = 0;
 
     // Buffer for the new hidden function
@@ -125,16 +130,18 @@ char *main_link(char *code) {
 	char buffer[25];
 	char start[200] = {0}; char end[200] = {0};
 	i = 0;
-
+	char f[50];
+	strcpy(f, file_name);
+	f[strlen(f)-1] = 'c';
 	while (i < before) {
-		code = gen_func(code, "\0");
-		sprintf(buffer, base, rand()%(i+1)+2);
+		code = gen_func(f, code, "\0");
+		sprintf(buffer, base, rand()%(i+ 1)+2);
 		strcat(start, buffer);
 		i++;
 	}
 	while (i < after+before) {
-		code = gen_func(code, "\0");
-		sprintf(buffer, base, rand()%(i+1)+2);
+		code = gen_func(f, code, "\0");
+		sprintf(buffer, base, rand()%(i+ 1)+2);
 		strcat(end, buffer);
 		i++;
 	}
@@ -142,7 +149,7 @@ char *main_link(char *code) {
 	sprintf(temp, main_temp, start, end);
 	strcpy(main_temp, temp);
 	int hidden_num = num_o_func(code);
-	
+	//printf("%d\n%d\n____\n", hidden_num, num_o_func(code));
 	sprintf(temp, main_temp, hidden_num);
 	strcpy(main_temp, temp);
     char hidden_header[200];
@@ -232,17 +239,16 @@ char *main_link(char *code) {
 }
 
 
-int obfuscate_asm(char * file) {
-
+int obfuscate_asm(char * file, int layers) {
 	char * code = read_file(file);
-	int layers = 4;
 	int i = 0;
 	while (i < layers) {
-		code = main_link(code);
+		code = main_link(file, code);
 		i++;
 	}
 
-	printf("%s", code);
+	printf("%s\n", code);
+	code[strlen(code)] = '\n';
 	write_file(file, code);
 	free(code);
 	//printf("%s", code);

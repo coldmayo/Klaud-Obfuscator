@@ -6,4 +6,4 @@ compile:
 	@gcc -o main main.c obfuscate.c utils.c
 
 run:
-	@./main
+	@./main test.c 4
