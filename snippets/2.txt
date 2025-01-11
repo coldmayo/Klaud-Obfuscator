@@ -1,0 +1,51 @@
+.file   "%s"
+    .text
+    .globl  f__%d
+    .type   f__%d, @function
+f__%d:
+.LFB%d:
+    .cfi_startproc
+    pushq   %rbp
+    .cfi_def_cfa_offset 16
+    .cfi_offset 6, -16
+    movq    %rsp, %rbp
+    .cfi_def_cfa_register 6
+    movl    $0, -20(%rbp)
+    movl    $3, -24(%rbp)
+    movl    $4, -28(%rbp)
+    call    rand
+    movl    %%eax, %%edx
+    movslq  %%edx, %rax
+    imulq   $1717986919, %rax, %rax
+    shrq    $32, %rax
+    sarq    $31, %rax
+    movl    %%eax, %%ecx
+    subl    %%ecx, %%edx
+    testl   %%edx, %%edx
+    jne     .L2
+    movl    %%edx, -24(%rbp)
+    movl    -24(%rbp), %%eax
+    imull   -28(%rbp), %%eax
+    movl    %%eax, %%ebx
+    call    rand
+    movslq  %%eax, %rdx
+    imulq   $274877907, %rdx, %rdx
+    shrq    $32, %rdx
+    sarq    $6, %rdx
+    movl    %%edx, %%ecx
+    movl    %%eax, %%edx
+    subl    %%ecx, %%edx
+    imull   $1000, %%edx, %%ecx
+    subl    %%ecx, %%eax
+    movl    %%eax, %%edx
+    leal    (%rbx,%rdx), %%eax
+    movl    %%eax, -20(%rbp)
+.L2:
+    movl    -20(%rbp), %%eax
+    movq    %rbx, -8(%rbp)
+    popq    %rbp
+    .cfi_def_cfa 7, 8
+    ret
+    .cfi_endproc
+.LFE%d:
+    .size   f__%d, .-f__%d

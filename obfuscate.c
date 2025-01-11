@@ -2,7 +2,70 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+#include <time.h>
+#include <dirent.h>
 #include "includes/utils.h"
+
+typedef struct {
+	char ** file_names;
+	int count;
+} Used;
+
+bool ignore(const char* file_name, Used * used) {
+	for (int i = 0; i < used->count; i++) {
+        if (strcmp(file_name, used->file_names[i]) == 0) {
+            return true;
+        }
+    }
+    return false;
+}
+
+void add_ignore_list(const char * file_name, Used * used) {
+	used->file_names = realloc(used->file_names, sizeof(char*) * (used->count + 1));
+	used->file_names[used->count] = strdup(file_name);
+	used->count++;
+}
+
+char * choose_func_file(Used * used) {
+	struct dirent* entry;
+	char ** file_names = malloc(sizeof(char *)*1024);
+	DIR* dir = opendir("./snippets/");
+
+	int file_count = 0;
+	while ((entry = readdir(dir)) != NULL) {
+        if (entry->d_type == DT_REG && !ignore(entry->d_name, used)) {
+            file_names[file_count] = strdup(entry->d_name);
+            if (file_names[file_count] == NULL) {
+                perror("Memory allocation failed");
+                closedir(dir);
+                for (int i = 0; i < file_count; i++) {
+                    free(file_names[i]);
+                }
+                free(file_names);
+                return NULL;
+            }
+            file_count++;
+        }
+    }
+
+    closedir(dir);
+    if (file_count == 0) {
+        return "\0";
+    }
+
+    srand(time(NULL));
+    int random_index = rand() % file_count;
+
+	char* selected_file = strdup(file_names[random_index]);
+
+    add_ignore_list(selected_file, used);
+
+	for (int i = 0; i < file_count; i++) {
+        free(file_names[i]);
+    }
+    free(file_names);
+    return selected_file;
+}
 
 int num_o_func(char * code) {
     int i = 0;
@@ -19,6 +82,7 @@ int num_o_func(char * code) {
 }
 
 char * gen_func(char * file_name, char * code, char * func) {
+    
 	char str[70] = ".file\t\"%s\"\n\t.text\n";
 	char result[20000];
 	char func_template[2000] =
@@ -41,10 +105,7 @@ char * gen_func(char * file_name, char * code, char * func) {
         "\t.cfi_endproc\n"
         ".LFE%d:\n"
         "\t.size\tf__%d, .-f__%d \n";
-	//printf("%s\n", file_name);
-	//sprintf(result, func_template, file_name);
-	//printf("%s\n", result);
-	//strcpy(func_template, result);
+	
 	if (func != NULL && func[0] != '\0') {
 		strcpy(func_template, func);
 	}
@@ -66,9 +127,24 @@ char * gen_func(char * file_name, char * code, char * func) {
 	return ret;
 }
 
+char * choose_func(char * file_name, char * code, Used * used) {
+    char * res = choose_func_file(used);
+	char * func;
+	char file[70] = "./snippets/";
+	if (strcmp("\0", res) == 0) {
+		code = gen_func(file_name, code, "\0");
+	} else {
+    	strcat(file, res);
+		func = read_file(file);
+		code = gen_func(file_name, code, func);
+	}
+	return code;
+}
+
 // goal of this function is to take the main function and put it into a hidden function
 
-char *main_link(char * file_name, char *code) {
+char *main_link(char * file_name, char *code, Used * used) {
+	//printf("%s\n", choose_func(used));
     int i = 0;
 
     // Buffer for the new hidden function
@@ -134,13 +210,13 @@ char *main_link(char * file_name, char *code) {
 	strcpy(f, file_name);
 	f[strlen(f)-1] = 'c';
 	while (i < before) {
-		code = gen_func(f, code, "\0");
+		code = choose_func(f, code, used);
 		sprintf(buffer, base, rand()%(i+ 1)+2);
 		strcat(start, buffer);
 		i++;
 	}
 	while (i < after+before) {
-		code = gen_func(f, code, "\0");
+		code = choose_func(f, code, used);
 		sprintf(buffer, base, rand()%(i+ 1)+2);
 		strcat(end, buffer);
 		i++;
@@ -240,10 +316,11 @@ char *main_link(char * file_name, char *code) {
 
 
 int obfuscate_asm(char * file, int layers) {
+	Used used = {NULL, 0};
 	char * code = read_file(file);
 	int i = 0;
 	while (i < layers) {
-		code = main_link(file, code);
+		code = main_link(file, code, &used);
 		i++;
 	}
 
