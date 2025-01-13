@@ -9,7 +9,28 @@
 typedef struct {
 	char ** file_names;
 	int count;
+    int curr_func;
 } Used;
+
+int find_main_num(char * code) {
+    int i = 0;
+    int j = 0;
+    int func_num = 1;
+    char num[6];
+    while (code[i] != '\0') {
+		if (code[i] == 'm' && code[i+1] == 'a' && code[i+2] == 'i' && code[i+4] == ':') {
+			while (code[i+10+j] != ':') {
+				num[j] = code[i+10+j]+'0';
+				j++;
+			}
+			break;
+		}
+		i++;
+    }
+    num[j] = '\0';
+    sscanf(num, "%d", &func_num);
+    return func_num;
+}
 
 bool ignore(const char* file_name, Used * used) {
 	for (int i = 0; i < used->count; i++) {
@@ -27,12 +48,18 @@ void add_ignore_list(const char * file_name, Used * used) {
 }
 
 char * choose_func_file(Used * used) {
-	struct dirent* entry;
-	char ** file_names = malloc(sizeof(char *)*1024);
-	DIR* dir = opendir("./snippets/");
+    struct dirent* entry;
+    char ** file_names = malloc(sizeof(char *)*1024);
+    if (!file_names) return NULL;
 
-	int file_count = 0;
-	while ((entry = readdir(dir)) != NULL) {
+    DIR* dir = opendir("./snippets/");
+    if (!dir) {
+        free(file_names);
+        return NULL;
+    }
+
+    int file_count = 0;
+    while ((entry = readdir(dir)) != NULL && file_count < 1024) {  // Added bound check
         if (entry->d_type == DT_REG && !ignore(entry->d_name, used)) {
             file_names[file_count] = strdup(entry->d_name);
             if (file_names[file_count] == NULL) {
@@ -50,20 +77,28 @@ char * choose_func_file(Used * used) {
 
     closedir(dir);
     if (file_count == 0) {
-        return "\0";
+        free(file_names);
+        return strdup("");  // Return a heap-allocated empty string instead of literal
     }
 
-    srand(time(NULL));
-    int random_index = rand() % file_count;
+    // Don't increment file_count here anymore
+    char* selected_file;
+    int random_index = rand() % (file_count + 1);  // +1 for pingus case
+    if (random_index < file_count) {
+        selected_file = strdup(file_names[random_index]);
+        if (selected_file) {
+            add_ignore_list(selected_file, used);
+        }
+    } else {
+        selected_file = strdup("pingus");  // Allocate memory for pingus case too
+    }
 
-	char* selected_file = strdup(file_names[random_index]);
-
-    add_ignore_list(selected_file, used);
-
-	for (int i = 0; i < file_count; i++) {
+    // Clean up
+    for (int i = 0; i < file_count; i++) {
         free(file_names[i]);
     }
     free(file_names);
+
     return selected_file;
 }
 
@@ -81,10 +116,10 @@ int num_o_func(char * code) {
 	return num_func;
 }
 
-char * gen_func(char * file_name, char * code, char * func) {
+char * gen_func(char * file_name, char * code, Used * used, char * func) {
     
 	char str[70] = ".file\t\"%s\"\n\t.text\n";
-	char result[20000];
+	char result[40000];
 	char func_template[2000] =
         ".file\t\"%s\"\n"
         "\t.text\n"
@@ -104,7 +139,7 @@ char * gen_func(char * file_name, char * code, char * func) {
         "\tret\n"
         "\t.cfi_endproc\n"
         ".LFE%d:\n"
-        "\t.size\tf__%d, .-f__%d \n";
+        "\t.size\tf__%d, .-f__%d\n";
 	
 	if (func != NULL && func[0] != '\0') {
 		strcpy(func_template, func);
@@ -112,6 +147,7 @@ char * gen_func(char * file_name, char * code, char * func) {
 	// find number of functions
 
     int num_func = num_o_func(code);
+    used->curr_func = num_func;
 
 	// add num_func
 	
@@ -127,21 +163,80 @@ char * gen_func(char * file_name, char * code, char * func) {
 	return ret;
 }
 
+// goal of this function is to take the main function and put it into a hidden function
+
+char * dead_link(char * file_name, char * code, Used * used) {
+    
+	int main_num = find_main_num(code);
+	char temp[20000];
+    char main_temp[20000] =
+    	".text\n"
+        "\t.globl\tf__%%d\n"
+        "\t.type\tf__%%d, @function\n"
+        "f__%%d:\n"
+        ".LFB%%d:\n"
+        "\t.cfi_startproc\n"
+        "\tpushq\t%rbp\n"
+        "\t.cfi_def_cfa_offset 16\n"
+        "\t.cfi_offset 6, -16\n"
+        "\tmovq\t%rsp, %rbp\n"
+        "\t.cfi_def_cfa_register 6\n"
+        "%s\n"
+        "\tmovl\t$0, %%%%eax\n"
+        "\tpopq\t%rbp\n"
+        "\t.cfi_def_cfa 7, 8\n"
+        "\tret\n"
+        "\t.cfi_endproc\n"
+        ".LFE%%d:\n"
+        "\t.size\tf__%%d, .-f__%%d\n";
+    
+    strcpy(main_temp, temp);
+    int i;
+    // add extra function calls
+	int before = rand() % (5+1);
+	char base[25] = "\tcall\tf__%d\n";
+	char buffer[25];
+	char start[200] = {0}; char end[200] = {0};
+	i = 0;
+	char f[50];
+	int random;
+	strcpy(f, file_name);
+	f[strlen(f)-1] = 'c';
+	while (i < before) {
+        code = gen_func(file_name, code, used, "\0");
+        random = rand()%(num_o_func(code)+ 1)+2;
+        while (random == main_num) {
+			random = rand()%(num_o_func(code)+ 1)+2;
+        }
+		sprintf(buffer, base, random);
+		strcat(start, buffer);
+		i++;
+	}
+	sprintf(temp, main_temp, start, end);	
+	int num_func = num_o_func(code);
+	sprintf(temp, main_temp, num_func, num_func, num_func, num_func, num_func, num_func, num_func);
+	strcpy(main_temp, temp);
+    strcat(main_temp, code);
+    char * ret = malloc(strlen(main_temp)+1);
+	strcpy(ret, main_temp);
+	return ret;
+}
+
 char * choose_func(char * file_name, char * code, Used * used) {
     char * res = choose_func_file(used);
 	char * func;
 	char file[70] = "./snippets/";
 	if (strcmp("\0", res) == 0) {
-		code = gen_func(file_name, code, "\0");
-	} else {
+		code = gen_func(file_name, code, used, "\0");
+	} else if (strcmp("pingus", res) == 0) {
+        code = dead_link(file_name, code, used);
+    } else {
     	strcat(file, res);
 		func = read_file(file);
-		code = gen_func(file_name, code, func);
+		code = gen_func(file_name, code, used, func);
 	}
 	return code;
 }
-
-// goal of this function is to take the main function and put it into a hidden function
 
 char *main_link(char * file_name, char *code, Used * used) {
 	//printf("%s\n", choose_func(used));
@@ -149,11 +244,6 @@ char *main_link(char * file_name, char *code, Used * used) {
 
     // Buffer for the new hidden function
     char new_hidden_func[10000] = {0};
-
-    // Dynamically create unique labels
-    
-    
-    i = 0;
 
     // Templates for function headers and footers with dynamic labels
 	char temp[2000];
@@ -183,20 +273,7 @@ char *main_link(char * file_name, char *code, Used * used) {
         "\t.section\t.note.GNU-stack,\"\",@progbits";
 // Find main function label #
     int j = 0;
-    int func_num = 1;
-    char num[6];
-    while (code[i] != '\0') {
-		if (code[i] == 'm' && code[i+1] == 'a' && code[i+2] == 'i' && code[i+4] == ':') {
-			while (code[i+10+j] != ':') {
-				num[j] = code[i+10+j]+'0';
-				j++;
-			}
-			break;
-		}
-		i++;
-    }
-    num[j] = '\0';
-    sscanf(num, "%d", &func_num);
+    int func_num = find_main_num(code);
     sprintf(temp, main_temp, func_num, func_num);
     strcpy(main_temp, temp);
     // add extra function calls
@@ -209,15 +286,18 @@ char *main_link(char * file_name, char *code, Used * used) {
 	char f[50];
 	strcpy(f, file_name);
 	f[strlen(f)-1] = 'c';
+	int random;
 	while (i < before) {
 		code = choose_func(f, code, used);
-		sprintf(buffer, base, rand()%(i+ 1)+2);
+        random = used->curr_func;
+		sprintf(buffer, base, random);
 		strcat(start, buffer);
 		i++;
 	}
 	while (i < after+before) {
 		code = choose_func(f, code, used);
-		sprintf(buffer, base, rand()%(i+ 1)+2);
+        random = used->curr_func;
+		sprintf(buffer, base, random);
 		strcat(end, buffer);
 		i++;
 	}
@@ -292,7 +372,7 @@ char *main_link(char * file_name, char *code, Used * used) {
     strcat(new_hidden_func, hidden_footer);
 
     // Add the new hidden function to the end of the updated code
-    //strcat(new_hidden_func, updated_code);
+    
     char * tmp = strdup(updated_code);
     strcpy(updated_code, new_hidden_func);
     strcat(updated_code, tmp);
@@ -316,7 +396,7 @@ char *main_link(char * file_name, char *code, Used * used) {
 
 
 int obfuscate_asm(char * file, int layers) {
-	Used used = {NULL, 0};
+	Used used = {NULL, 0, 0};
 	char * code = read_file(file);
 	int i = 0;
 	while (i < layers) {
