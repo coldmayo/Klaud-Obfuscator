@@ -1,163 +1,23 @@
 	.text
-	.globl	f__27
-	.type	f__27, @function
-f__27:
-.LFB27:
-1:
-	.cfi_startproc
-	pushq	%rbp
-	.cfi_def_cfa_offset 16
-	.cfi_offset 6, -16
-	movq	%rsp, %rbp
-	.cfi_def_cfa_register 6
-	call	f__16
-	call	f__22
-	call	f__17
-	call	f__18
-	call	f__19
-	call	f__20
-	call	f__21
-	movl	$0, %eax
-	popq	%rbp
-	.cfi_def_cfa 7, 8
-		ret
-	.cfi_endproc
-.LFE27:
-	.size	f__27, .-f__27
-.file	"test.c"
-	.text
-	.globl	f__26
-	.type	f__26, @function
-f__26:
-.LFB26:
-	.cfi_startproc
-	pushq	%rbp
-	.cfi_def_cfa_offset 16
-	.cfi_offset 6, -16
-	movq	%rsp, %rbp
-	.cfi_def_cfa_register 6
-	movl	$0, %eax
-	popq	%rbp
-	.cfi_def_cfa 7, 8
-	ret
-	.cfi_endproc
-.LFE26:
-	.size	f__26, .-f__26
-.file	"test.c"
-	.text
-	.globl	f__25
-	.type	f__25, @function
-f__25:
-.LFB25:
-	.cfi_startproc
-	pushq	%rbp
-	.cfi_def_cfa_offset 16
-	.cfi_offset 6, -16
-	movq	%rsp, %rbp
-	.cfi_def_cfa_register 6
-	movl	$0, %eax
-	popq	%rbp
-	.cfi_def_cfa 7, 8
-	ret
-	.cfi_endproc
-.LFE25:
-	.size	f__25, .-f__25
-.file	"test.c"
-	.text
-	.globl	f__24
-	.type	f__24, @function
-f__24:
-.LFB24:
-	.cfi_startproc
-	pushq	%rbp
-	.cfi_def_cfa_offset 16
-	.cfi_offset 6, -16
-	movq	%rsp, %rbp
-	.cfi_def_cfa_register 6
-	movl	$0, %eax
-	popq	%rbp
-	.cfi_def_cfa 7, 8
-	ret
-	.cfi_endproc
-.LFE24:
-	.size	f__24, .-f__24
-.file	"test.c"
-	.text
-	.globl	f__23
-	.type	f__23, @function
-f__23:
-.LFB23:
-	.cfi_startproc
-	pushq	%rbp
-	.cfi_def_cfa_offset 16
-	.cfi_offset 6, -16
-	movq	%rsp, %rbp
-	.cfi_def_cfa_register 6
-	movl	$0, %eax
-	popq	%rbp
-	.cfi_def_cfa 7, 8
-	ret
-	.cfi_endproc
-.LFE23:
-	.size	f__23, .-f__23
-	.text
-	.globl	f__22
-	.type	f__22, @function
-f__22:
-.LFB22:
-1:
-	.cfi_startproc
-	pushq	%rbp
-	.cfi_def_cfa_offset 16
-	.cfi_offset 6, -16
-	movq	%rsp, %rbp
-	.cfi_def_cfa_register 6
-	call	f__12
-	call	f__15
-	call	f__13
-	call	f__14
-	movl	$0, %eax
-	popq	%rbp
-	.cfi_def_cfa 7, 8
-		ret
-	.cfi_endproc
-.LFE22:
-	.size	f__22, .-f__22
-.file	"test.c"
-	.text
-	.globl	f__21
-	.type	f__21, @function
-f__21:
-.LFB21:
-	.cfi_startproc
-	pushq	%rbp
-	.cfi_def_cfa_offset 16
-	.cfi_offset 6, -16
-	movq	%rsp, %rbp
-	.cfi_def_cfa_register 6
-	movl	$0, %eax
-	popq	%rbp
-	.cfi_def_cfa 7, 8
-	ret
-	.cfi_endproc
-.LFE21:
-	.size	f__21, .-f__21
-.file	"test.c"
-	.text
 	.globl	f__20
 	.type	f__20, @function
 f__20:
 .LFB20:
+1:
 	.cfi_startproc
 	pushq	%rbp
 	.cfi_def_cfa_offset 16
 	.cfi_offset 6, -16
 	movq	%rsp, %rbp
 	.cfi_def_cfa_register 6
+	call	f__13
+	call	f__14
+	call	f__16
+	call	f__15
 	movl	$0, %eax
 	popq	%rbp
 	.cfi_def_cfa 7, 8
-	ret
+		ret
 	.cfi_endproc
 .LFE20:
 	.size	f__20, .-f__20
@@ -218,12 +78,36 @@ f__17:
 	.cfi_endproc
 .LFE17:
 	.size	f__17, .-f__17
-.file	"test.c"
 	.text
 	.globl	f__16
 	.type	f__16, @function
 f__16:
 .LFB16:
+1:
+	.cfi_startproc
+	pushq	%rbp
+	.cfi_def_cfa_offset 16
+	.cfi_offset 6, -16
+	movq	%rsp, %rbp
+	.cfi_def_cfa_register 6
+	call	f__8
+	call	f__9
+	call	f__10
+	call	f__12
+	call	f__11
+	movl	$0, %eax
+	popq	%rbp
+	.cfi_def_cfa 7, 8
+		ret
+	.cfi_endproc
+.LFE16:
+	.size	f__16, .-f__16
+.file	"test.c"
+	.text
+	.globl	f__15
+	.type	f__15, @function
+f__15:
+.LFB15:
 	.cfi_startproc
 	pushq	%rbp
 	.cfi_def_cfa_offset 16
@@ -234,31 +118,6 @@ f__16:
 	popq	%rbp
 	.cfi_def_cfa 7, 8
 	ret
-	.cfi_endproc
-.LFE16:
-	.size	f__16, .-f__16
-	.text
-	.globl	f__15
-	.type	f__15, @function
-f__15:
-.LFB15:
-1:
-	.cfi_startproc
-	pushq	%rbp
-	.cfi_def_cfa_offset 16
-	.cfi_offset 6, -16
-	movq	%rsp, %rbp
-	.cfi_def_cfa_register 6
-	call	f__2
-	call	f__11
-	call	f__7
-	call	f__8
-	call	f__9
-	call	f__10
-	movl	$0, %eax
-	popq	%rbp
-	.cfi_def_cfa 7, 8
-		ret
 	.cfi_endproc
 .LFE15:
 	.size	f__15, .-f__15
@@ -300,12 +159,37 @@ f__13:
 	.cfi_endproc
 .LFE13:
 	.size	f__13, .-f__13
-.file	"test.c"
 	.text
 	.globl	f__12
 	.type	f__12, @function
 f__12:
 .LFB12:
+1:
+	.cfi_startproc
+	pushq	%rbp
+	.cfi_def_cfa_offset 16
+	.cfi_offset 6, -16
+	movq	%rsp, %rbp
+	.cfi_def_cfa_register 6
+	call	f__2
+	call	f__7
+	call	f__3
+	call	f__4
+	call	f__5
+	call	f__6
+	movl	$0, %eax
+	popq	%rbp
+	.cfi_def_cfa 7, 8
+		ret
+	.cfi_endproc
+.LFE12:
+	.size	f__12, .-f__12
+.file	"test.c"
+	.text
+	.globl	f__11
+	.type	f__11, @function
+f__11:
+.LFB11:
 	.cfi_startproc
 	pushq	%rbp
 	.cfi_def_cfa_offset 16
@@ -316,31 +200,6 @@ f__12:
 	popq	%rbp
 	.cfi_def_cfa 7, 8
 	ret
-	.cfi_endproc
-.LFE12:
-	.size	f__12, .-f__12
-	.text
-	.globl	f__11
-	.type	f__11, @function
-f__11:
-.LFB11:
-1:
-	.cfi_startproc
-	pushq	%rbp
-	.cfi_def_cfa_offset 16
-	.cfi_offset 6, -16
-	movq	%rsp, %rbp
-	.cfi_def_cfa_register 6
-	leaq	.LC0(%rip), %rax
-	movq	%rax, %rdi
-	call	puts@PLT
-	leaq	.LC1(%rip), %rax
-	movq	%rax, %rdi
-	call	puts@PLT
-	movl	$0, %eax
-	popq	%rbp
-	.cfi_def_cfa 7, 8
-		ret
 	.cfi_endproc
 .LFE11:
 	.size	f__11, .-f__11
@@ -382,37 +241,12 @@ f__9:
 	.cfi_endproc
 .LFE9:
 	.size	f__9, .-f__9
-    .file   "test.c"
-    .text
-    .globl  f__8
-    .type   f__8, @function
-f__8:
-.LFB8:
-    .cfi_startproc
-    pushq   %rbp
-    .cfi_def_cfa_offset 16
-    .cfi_offset 6, -16
-    movq    %rsp, %rbp
-    .cfi_def_cfa_register 6
-    movl    $3, -4(%rbp)
-    movl    $3, -8(%rbp)
-    movl    -4(%rbp), %eax
-    imull   -8(%rbp), %eax
-    addl    %eax, %eax
-    movl    %eax, -12(%rbp)
-    movl    -12(%rbp), %eax
-    popq    %rbp
-    .cfi_def_cfa 7, 8
-    ret
-    .cfi_endproc
-.LFE8:
-    .size   f__8, .-f__8
 .file	"test.c"
 	.text
-	.globl	f__7
-	.type	f__7, @function
-f__7:
-.LFB7:
+	.globl	f__8
+	.type	f__8, @function
+f__8:
+.LFB8:
 	.cfi_startproc
 	pushq	%rbp
 	.cfi_def_cfa_offset 16
@@ -423,6 +257,31 @@ f__7:
 	popq	%rbp
 	.cfi_def_cfa 7, 8
 	ret
+	.cfi_endproc
+.LFE8:
+	.size	f__8, .-f__8
+	.text
+	.globl	f__7
+	.type	f__7, @function
+f__7:
+.LFB7:
+1:
+	.cfi_startproc
+	pushq	%rbp
+	.cfi_def_cfa_offset 16
+	.cfi_offset 6, -16
+	movq	%rsp, %rbp
+	.cfi_def_cfa_register 6
+	leaq	.LC0(%rip), %rax
+	movq	%rax, %rdi
+	call	puts@PLT
+	leaq	.LC1(%rip), %rax
+	movq	%rax, %rdi
+	call	puts@PLT
+	movl	$0, %eax
+	popq	%rbp
+	.cfi_def_cfa 7, 8
+		ret
 	.cfi_endproc
 .LFE7:
 	.size	f__7, .-f__7
@@ -445,69 +304,12 @@ f__6:
 	.cfi_endproc
 .LFE6:
 	.size	f__6, .-f__6
-.file	"test.c"
-	.text
-	.globl	f__5
-	.type	f__5, @function
-f__5:
-.LFB5:
-	.cfi_startproc
-	pushq	%rbp
-	.cfi_def_cfa_offset 16
-	.cfi_offset 6, -16
-	movq	%rsp, %rbp
-	.cfi_def_cfa_register 6
-	movl	$0, %eax
-	popq	%rbp
-	.cfi_def_cfa 7, 8
-	ret
-	.cfi_endproc
-.LFE5:
-	.size	f__5, .-f__5
-.file	"test.c"
-	.text
-	.globl	f__4
-	.type	f__4, @function
-f__4:
-.LFB4:
-	.cfi_startproc
-	pushq	%rbp
-	.cfi_def_cfa_offset 16
-	.cfi_offset 6, -16
-	movq	%rsp, %rbp
-	.cfi_def_cfa_register 6
-	movl	$0, %eax
-	popq	%rbp
-	.cfi_def_cfa 7, 8
-	ret
-	.cfi_endproc
-.LFE4:
-	.size	f__4, .-f__4
-.file	"test.c"
-	.text
-	.globl	f__3
-	.type	f__3, @function
-f__3:
-.LFB3:
-	.cfi_startproc
-	pushq	%rbp
-	.cfi_def_cfa_offset 16
-	.cfi_offset 6, -16
-	movq	%rsp, %rbp
-	.cfi_def_cfa_register 6
-	movl	$0, %eax
-	popq	%rbp
-	.cfi_def_cfa 7, 8
-	ret
-	.cfi_endproc
-.LFE3:
-	.size	f__3, .-f__3
 .file   "test.c"
     .text
-    .globl  f__2
-    .type   f__2, @function
-f__2:
-.LFB2:
+    .globl  f__5
+    .type   f__5, @function
+f__5:
+.LFB5:
     .cfi_startproc
     pushq   %rbp
     .cfi_def_cfa_offset 16
@@ -551,6 +353,91 @@ f__2:
     .cfi_def_cfa 7, 8
     ret
     .cfi_endproc
+.LFE5:
+    .size   f__5, .-f__5
+.file	"test.c"
+	.text
+	.globl	f__4
+	.type	f__4, @function
+f__4:
+.LFB4:
+	.cfi_startproc
+	pushq	%rbp
+	.cfi_def_cfa_offset 16
+	.cfi_offset 6, -16
+	movq	%rsp, %rbp
+	.cfi_def_cfa_register 6
+	movl	$0, %eax
+	popq	%rbp
+	.cfi_def_cfa 7, 8
+	ret
+	.cfi_endproc
+.LFE4:
+	.size	f__4, .-f__4
+    .file   "test.c"
+    .text
+    .globl  f__3
+    .type   f__3, @function
+f__3:
+.LFB3:
+    .cfi_startproc
+    pushq   %rbp
+    .cfi_def_cfa_offset 16
+    .cfi_offset 6, -16
+    movq    %rsp, %rbp
+    .cfi_def_cfa_register 6
+    movl    $3, -4(%rbp)
+    movl    $3, -8(%rbp)
+    movl    -4(%rbp), %eax
+    imull   -8(%rbp), %eax
+    addl    %eax, %eax
+    movl    %eax, -12(%rbp)
+    movl    -12(%rbp), %eax
+    popq    %rbp
+    .cfi_def_cfa 7, 8
+    ret
+    .cfi_endproc
+.LFE3:
+    .size   f__3, .-f__3
+	.section	.rodata
+.LCa:
+	.string "w"
+.LCb:
+	.string "/dev/null"
+.LCc:
+	.string "Done!"
+.LCd:
+	.string "/dev/tty"
+	.file	"test.c"
+	.text
+    .globl  f__2
+    .type   f__2, @function
+f__2:
+.LFB2:
+    .cfi_startproc
+    pushq   %rbp
+    .cfi_def_cfa_offset 16
+    .cfi_offset 6, -16
+    movq    %rsp, %rbp
+    .cfi_def_cfa_register 6
+	movq    stdout(%rip), %rax
+    movq    %rax, %rdx
+    leaq    .LCa(%rip), %rsi
+    leaq    .LCb(%rip), %rdi
+    call    freopen
+    leaq    .LCc(%rip), %rdi
+    call    puts
+    movq    stdout(%rip), %rax
+    movq    %rax, %rdx
+    leaq    .LCa(%rip), %rsi
+    leaq    .LCd(%rip), %rdi
+    call    freopen
+	movl	$1, %eax
+	popq    %rbp
+    .cfi_def_cfa 7, 8
+    ret
+    .cfi_endproc
+
 .LFE2:
     .size   f__2, .-f__2
 	.file	"test.c"
@@ -588,11 +475,10 @@ main:
 	.cfi_offset 6, -16
 	movq	%rsp, %rbp
 	.cfi_def_cfa_register 6
-	call	f__23
-	call	f__24
-	call	f__25
-	call	f__26
-	call	f__27
+	call	f__17
+	call	f__18
+	call	f__20
+	call	f__19
 	movl	$0, %eax
 	popq	%rbp
 	.cfi_def_cfa 7, 8

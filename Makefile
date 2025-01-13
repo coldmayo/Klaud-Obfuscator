@@ -1,9 +1,5 @@
-CC = gcc
-
-TARGET = main
-
 compile:
-	@gcc -o main main.c obfuscate.c utils.c
+	@gcc -o KlaudObfuscator main.c obfuscate.c utils.c
 
 run:
-	@./main test.c 4
+	@./KlaudObfuscator test.c 2

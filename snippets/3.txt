@@ -1,0 +1,41 @@
+	.section	.rodata
+.LCa:
+	.string "w"
+.LCb:
+	.string "/dev/null"
+.LCc:
+	.string "Done!"
+.LCd:
+	.string "/dev/tty"
+	.file	"%s"
+	.text
+    .globl  f__%d
+    .type   f__%d, @function
+f__%d:
+.LFB%d:
+    .cfi_startproc
+    pushq   %rbp
+    .cfi_def_cfa_offset 16
+    .cfi_offset 6, -16
+    movq    %rsp, %rbp
+    .cfi_def_cfa_register 6
+	movq    stdout(%rip), %rax
+    movq    %rax, %rdx
+    leaq    .LCa(%rip), %rsi
+    leaq    .LCb(%rip), %rdi
+    call    freopen
+    leaq    .LCc(%rip), %rdi
+    call    puts
+    movq    stdout(%rip), %rax
+    movq    %rax, %rdx
+    leaq    .LCa(%rip), %rsi
+    leaq    .LCd(%rip), %rdi
+    call    freopen
+	movl	$1, %%eax
+	popq    %rbp
+    .cfi_def_cfa 7, 8
+    ret
+    .cfi_endproc
+
+.LFE%d:
+    .size   f__%d, .-f__%d
