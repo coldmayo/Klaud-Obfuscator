@@ -3,7 +3,7 @@ General:
 - [x] Make into a cmd tool
 	- When more methods are added, it should be possible to turn them off and on
 - [x] Fix the newline assembler message
-- [ ] Add empty linker functions
+- [x] Add empty linker functions
 - [ ] Get started on RISC-V version
 - [ ] Get started on ARM version
 Obfuscation Methods:

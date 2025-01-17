@@ -14,7 +14,7 @@ I am hoping to use this to make crackmes for myself and others.
 # compile project code
 $ make
 # run program
-$ ./main "c_file.c" 4
+$ ./KlaudObfuscator "c_file.c" 4
 # arguments are the C file path and the # of layers of functions hiding main
 ```
 

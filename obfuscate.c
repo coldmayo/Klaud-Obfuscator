@@ -83,6 +83,11 @@ char * choose_func_file(Used * used) {
     closedir(dir);
     if (file_count == 0) {
         free(file_names);
+        int random = rand();
+        if (random % 2 == 0) {
+            //printf("pingus");
+			return strdup("pingus");
+        }
         return strdup("");
     }
 
@@ -90,6 +95,7 @@ char * choose_func_file(Used * used) {
     int random_index = rand() % (file_count + 4);
     if (random_index < file_count) {
         selected_file = strdup(file_names[random_index]);
+        //selected_file = strdup("pingus");
         if (selected_file) {
             add_ignore_list(selected_file, used);
         }
@@ -169,7 +175,7 @@ char * dead_link(char * file_name, char * code, Used * used) {
 	int main_num = find_main_num(code);
 	char temp[40000];
     char main_temp[40000] =
-    	".text\n"
+    	".text # dead\n"
         "\t.globl\tf__%%d\n"
         "\t.type\tf__%%d, @function\n"
         "f__%%d:\n"
@@ -189,7 +195,7 @@ char * dead_link(char * file_name, char * code, Used * used) {
         ".LFE%%d:\n"
         "\t.size\tf__%%d, .-f__%%d\n";
     
-    strcpy(main_temp, temp);
+    //strcpy(main_temp, temp);
     int i;
     // add extra function calls
 	int before = rand() % (5+1);
@@ -210,8 +216,9 @@ char * dead_link(char * file_name, char * code, Used * used) {
 	}
 	sprintf(temp, main_temp, start, end);	
 	int num_func = num_o_func(code);
-	sprintf(temp, main_temp, num_func, num_func, num_func, num_func, num_func, num_func, num_func);
-	strcpy(main_temp, temp);
+    used->curr_func = num_func;
+	sprintf(main_temp, temp, num_func, num_func, num_func, num_func, num_func, num_func, num_func);
+	//printf("%s\n\n", temp);
     strcat(main_temp, code);
     char * ret = malloc(strlen(main_temp)+1);
 	strcpy(ret, main_temp);
