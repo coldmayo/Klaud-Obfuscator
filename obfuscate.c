@@ -87,13 +87,14 @@ char * choose_func_file(Used * used) {
     }
 
 	char* selected_file;
-    int random_index = rand() % (file_count + 1);
+    int random_index = rand() % (file_count + 4);
     if (random_index < file_count) {
         selected_file = strdup(file_names[random_index]);
         if (selected_file) {
             add_ignore_list(selected_file, used);
         }
     } else {
+        //printf("pingus\n");
         selected_file = strdup("pingus");
     }
 
@@ -166,8 +167,8 @@ char * gen_func(char * file_name, char * code, Used * used, char * func) {
 char * dead_link(char * file_name, char * code, Used * used) {
     
 	int main_num = find_main_num(code);
-	char temp[20000];
-    char main_temp[20000] =
+	char temp[40000];
+    char main_temp[40000] =
     	".text\n"
         "\t.globl\tf__%%d\n"
         "\t.type\tf__%%d, @function\n"
@@ -202,10 +203,7 @@ char * dead_link(char * file_name, char * code, Used * used) {
 	f[strlen(f)-1] = 'c';
 	while (i < before) {
         code = gen_func(file_name, code, used, "\0");
-        random = rand()%(num_o_func(code)+ 1)+2;
-        while (random == main_num) {
-			random = rand()%(num_o_func(code)+ 1)+2;
-        }
+        random = used->curr_func;
 		sprintf(buffer, base, random);
 		strcat(start, buffer);
 		i++;
@@ -243,8 +241,8 @@ char *main_link(char * file_name, char *code, Used * used) {
 	char new_hidden_func[10000] = {0};
 
     // Templates for function headers and footers with dynamic labels
-	char temp[2000];
-    char main_temp[2000] =
+	char temp[4000];
+    char main_temp[4000] =
     	".text\n"
         "\t.globl\tmain\n"
         "\t.type\tmain, @function\n"
@@ -330,7 +328,7 @@ char *main_link(char * file_name, char *code, Used * used) {
     bool copying_main = false;
 
     // Buffers for the modified code
-    char updated_code[20000] = {0};
+    char updated_code[40000] = {0};
     strcat(updated_code, code);
 	
     while (code[i] != '\0') {
@@ -387,6 +385,27 @@ char *main_link(char * file_name, char *code, Used * used) {
     return ret;
 }
 
+// converts all strings to their hex values
+char * to_ascii(char * code) {
+	int i = 0;
+	int j;
+	char string[50];
+	int int_str[50];
+	while(code[i] != '\0') {
+    	string[50];
+		if (code[i] == 'g' && code[i-1] == 'n' && code[i-2] == 'i' && code[i-3] == 'r' && code[i-6] == '.') {
+			j = 0;
+			while (code[i+j+3] != '"') {
+				string[j] = code[i+j+3];
+				int_str[j] = code[i+j+3]-'0';
+				j++;
+			}
+		}
+		i++;
+	}
+
+	return code;
+}
 
 int obfuscate_asm(char * file, int layers) {
 	Used used = {NULL, 0, 0};
@@ -396,7 +415,7 @@ int obfuscate_asm(char * file, int layers) {
 		code = main_link(file, code, &used);
 		i++;
 	}
-
+	//to_ascii(code);
 	printf("%s\n", code);
 	code[strlen(code)] = '\n';
 	write_file(file, code);

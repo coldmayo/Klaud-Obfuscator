@@ -1,0 +1,43 @@
+.file	"%s"
+	.text
+    .globl  f_%d
+    .type   f_%d, @function
+f_%d:
+LFB%d_:
+	.cfi_startproc
+    pushq   %rbp
+    .cfi_def_cfa_offset 16
+    .cfi_offset 6, -16
+    movq    %rsp, %rbp
+    .cfi_def_cfa_register 6
+	movl	$2124, -4(%rbp)
+	movl	$2, -8(%rbp)
+	jmp	.L3
+.L3:
+	cmp	$0, -8(%rbp)
+	jne	.L4
+	movl	$5, -12(%rbp)
+	jmp	.L5
+.L4:
+	movl	-4(%rbp), %%eax
+	imul	%%eax, %%eax
+	movl	%%eax, -4(%rbp)
+	sub	$1, -8(%rbp)
+.L5:
+	cmp	$0, -12(%rbp)
+	jne	.L6
+	movl	-4(%rbp), %%eax
+	popq    %rbp
+    .cfi_def_cfa 7, 8
+    ret
+    .cfi_endproc
+.L6:
+	movl	-4(%rbp), %%eax
+	movl	%%eax, -16(%rbp)
+	movl	-4(%rbp), %%eax
+	add	$3, %%eax
+	add	%%eax, -4(%rbp)
+	sub	$1, -12(%rbp)
+
+.LFE%d_:
+    .size   f_%d, .-f_%d
