@@ -130,8 +130,9 @@ int num_o_func(char * code) {
 // creates a function to insert into the assembly code
 char * gen_func(char * file_name, char * code, Used * used, char * func) {
     
-	char str[70] = ".file\t\"%s\"\n\t.text\n";
+	char str[70] = ".file\t\"%s\"\n";
 	char result[40000];
+	char buf[300];
 	char func_template[2000] =
         ".file\t\"%s\"\n"
         "\t.text\n"
@@ -161,8 +162,8 @@ char * gen_func(char * file_name, char * code, Used * used, char * func) {
     used->curr_func = num_func;
 
 	sprintf(result, func_template, file_name, num_func, num_func, num_func, num_func, num_func, num_func, num_func);
-	sprintf(str, str, file_name);
-	remove_substring(code, str);
+	sprintf(buf, str, file_name);
+	remove_substring(code, buf);
 	strcat(result, code);
 	char * ret = malloc(strlen(result)+1);
 	strcpy(ret, result);
@@ -175,7 +176,7 @@ char * dead_link(char * file_name, char * code, Used * used) {
 	int main_num = find_main_num(code);
 	char temp[40000];
     char main_temp[40000] =
-    	".text # dead\n"
+    	".text\n"
         "\t.globl\tf__%%d\n"
         "\t.type\tf__%%d, @function\n"
         "f__%%d:\n"
@@ -423,7 +424,7 @@ int obfuscate_asm(char * file, int layers) {
 		i++;
 	}
 	//to_ascii(code);
-	printf("%s\n", code);
+	//printf("%s\n", code);
 	code[strlen(code)] = '\n';
 	write_file(file, code);
 	free(code);

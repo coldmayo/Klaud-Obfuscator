@@ -10,12 +10,24 @@ f__25:
 	.cfi_offset 6, -16
 	movq	%rsp, %rbp
 	.cfi_def_cfa_register 6
-	call	f__2
-	call	f__16
-	call	f__8
-	call	f__13
-	call	f__14
-	call	f__15
+	
+	lea	f__2(%rip), %rax
+	call	*%rax
+	
+	lea	f__16(%rip), %rax
+	call	*%rax
+	
+	lea	f__8(%rip), %rax
+	call	*%rax
+	
+	lea	f__13(%rip), %rax
+	call	*%rax
+	
+	lea	f__14(%rip), %rax
+	call	*%rax
+	
+	lea	f__15(%rip), %rax
+	call	*%rax
 	movl	$0, %eax
 	popq	%rbp
 	.cfi_def_cfa 7, 8
@@ -85,10 +97,18 @@ f__23:
 	.cfi_offset 6, -16
 	movq	%rsp, %rbp
 	.cfi_def_cfa_register 6
-	call	f__19
-	call	f__20
-	call	f__21
-	call	f__22
+	
+	lea	f__19(%rip), %rax
+	call	*%rax
+	
+	lea	f__20(%rip), %rax
+	call	*%rax
+	
+	lea	f__21(%rip), %rax
+	call	*%rax
+	
+	lea	f__22(%rip), %rax
+	call	*%rax
 
 	movl	$0, %eax
 	popq	%rbp
@@ -97,7 +117,6 @@ f__23:
 	.cfi_endproc
 .LFE23:
 	.size	f__23, .-f__23
-.file	"test.c"
 	.text
 	.globl	f__22
 	.type	f__22, @function
@@ -116,7 +135,6 @@ f__22:
 	.cfi_endproc
 .LFE22:
 	.size	f__22, .-f__22
-.file	"test.c"
 	.text
 	.globl	f__21
 	.type	f__21, @function
@@ -135,7 +153,6 @@ f__21:
 	.cfi_endproc
 .LFE21:
 	.size	f__21, .-f__21
-.file	"test.c"
 	.text
 	.globl	f__20
 	.type	f__20, @function
@@ -154,7 +171,6 @@ f__20:
 	.cfi_endproc
 .LFE20:
 	.size	f__20, .-f__20
-.file	"test.c"
 	.text
 	.globl	f__19
 	.type	f__19, @function
@@ -184,7 +200,9 @@ f__18:
 	.cfi_offset 6, -16
 	movq	%rsp, %rbp
 	.cfi_def_cfa_register 6
-	call	f__17
+	
+	lea	f__17(%rip), %rax
+	call	*%rax
 
 	movl	$0, %eax
 	popq	%rbp
@@ -193,7 +211,6 @@ f__18:
 	.cfi_endproc
 .LFE18:
 	.size	f__18, .-f__18
-.file	"test.c"
 	.text
 	.globl	f__17
 	.type	f__17, @function
@@ -248,7 +265,9 @@ f__15:
 	.cfi_offset 6, -16
 	movq	%rsp, %rbp
 	.cfi_def_cfa_register 6
-	call	f__14
+	
+	lea	f__14(%rip), %rax
+	call	*%rax
 
 	movl	$0, %eax
 	popq	%rbp
@@ -257,7 +276,6 @@ f__15:
 	.cfi_endproc
 .LFE15:
 	.size	f__15, .-f__15
-.file	"test.c"
 	.text
 	.globl	f__14
 	.type	f__14, @function
@@ -276,7 +294,6 @@ f__14:
 	.cfi_endproc
 .LFE14:
 	.size	f__14, .-f__14
-.file	"test.c"
 	.text
     .globl  f_14
     .type   f_14, @function
@@ -330,10 +347,18 @@ f__13:
 	.cfi_offset 6, -16
 	movq	%rsp, %rbp
 	.cfi_def_cfa_register 6
-	call	f__9
-	call	f__10
-	call	f__11
-	call	f__12
+	
+	lea	f__9(%rip), %rax
+	call	*%rax
+	
+	lea	f__10(%rip), %rax
+	call	*%rax
+	
+	lea	f__11(%rip), %rax
+	call	*%rax
+	
+	lea	f__12(%rip), %rax
+	call	*%rax
 
 	movl	$0, %eax
 	popq	%rbp
@@ -342,7 +367,6 @@ f__13:
 	.cfi_endproc
 .LFE13:
 	.size	f__13, .-f__13
-.file	"test.c"
 	.text
 	.globl	f__12
 	.type	f__12, @function
@@ -361,7 +385,6 @@ f__12:
 	.cfi_endproc
 .LFE12:
 	.size	f__12, .-f__12
-.file	"test.c"
 	.text
 	.globl	f__11
 	.type	f__11, @function
@@ -380,7 +403,6 @@ f__11:
 	.cfi_endproc
 .LFE11:
 	.size	f__11, .-f__11
-.file	"test.c"
 	.text
 	.globl	f__10
 	.type	f__10, @function
@@ -399,7 +421,6 @@ f__10:
 	.cfi_endproc
 .LFE10:
 	.size	f__10, .-f__10
-.file	"test.c"
 	.text
 	.globl	f__9
 	.type	f__9, @function
@@ -429,11 +450,21 @@ f__8:
 	.cfi_offset 6, -16
 	movq	%rsp, %rbp
 	.cfi_def_cfa_register 6
-	call	f__3
-	call	f__4
-	call	f__5
-	call	f__6
-	call	f__7
+	
+	lea	f__3(%rip), %rax
+	call	*%rax
+	
+	lea	f__4(%rip), %rax
+	call	*%rax
+	
+	lea	f__5(%rip), %rax
+	call	*%rax
+	
+	lea	f__6(%rip), %rax
+	call	*%rax
+	
+	lea	f__7(%rip), %rax
+	call	*%rax
 
 	movl	$0, %eax
 	popq	%rbp
@@ -442,7 +473,6 @@ f__8:
 	.cfi_endproc
 .LFE8:
 	.size	f__8, .-f__8
-.file	"test.c"
 	.text
 	.globl	f__7
 	.type	f__7, @function
@@ -461,7 +491,6 @@ f__7:
 	.cfi_endproc
 .LFE7:
 	.size	f__7, .-f__7
-.file	"test.c"
 	.text
 	.globl	f__6
 	.type	f__6, @function
@@ -480,7 +509,6 @@ f__6:
 	.cfi_endproc
 .LFE6:
 	.size	f__6, .-f__6
-.file	"test.c"
 	.text
 	.globl	f__5
 	.type	f__5, @function
@@ -499,7 +527,6 @@ f__5:
 	.cfi_endproc
 .LFE5:
 	.size	f__5, .-f__5
-.file	"test.c"
 	.text
 	.globl	f__4
 	.type	f__4, @function
@@ -518,7 +545,6 @@ f__4:
 	.cfi_endproc
 .LFE4:
 	.size	f__4, .-f__4
-.file	"test.c"
 	.text
 	.globl	f__3
 	.type	f__3, @function
@@ -546,8 +572,7 @@ f__3:
 	.string "Done!"
 .LCd:
 	.string "/dev/tty"
-	.file	"test.c"
-	.text
+		.text
     .globl  f__2
     .type   f__2, @function
 f__2:
@@ -578,8 +603,7 @@ f__2:
 
 .LFE2:
     .size   f__2, .-f__2
-	.file	"test.c"
-	.text
+		.text
 	.globl	penis
 	.type	penis, @function
 penis:
@@ -613,10 +637,18 @@ main:
 	.cfi_offset 6, -16
 	movq	%rsp, %rbp
 	.cfi_def_cfa_register 6
-	call	f__18
-	call	f__23
-	call	f__25
-	call	f__24
+	
+	lea	f__18(%rip), %rax
+	call	*%rax
+	
+	lea	f__23(%rip), %rax
+	call	*%rax
+	
+	lea	f__25(%rip), %rax
+	call	*%rax
+	
+	lea	f__24(%rip), %rax
+	call	*%rax
 	movl	$0, %eax
 	popq	%rbp
 	.cfi_def_cfa 7, 8

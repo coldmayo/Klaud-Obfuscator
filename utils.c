@@ -7,7 +7,7 @@ char * read_file(char * file) {
 
 	f = fopen(file, "rb");
 	fseek(f, 0, SEEK_END);
-	long size = ftell(f);
+	long size = ftell(f)*2;
 	rewind(f);
 	char * str = malloc(size+1);
 	size_t read_sz = fread(str, 1, size, f);
@@ -40,13 +40,20 @@ int num_digits(int num) {
 	return i;
 }
 
-void remove_substring(char * str, const char * substr) {
+// return position of substring
+int remove_substring(char * str, const char * substr) {
 	char *pos = strstr(str, substr);
+	int posit = 0;
     if (pos != NULL) {
         size_t len = strlen(substr);
+		posit = pos - str;
         
         memmove(pos, pos + len, strlen(pos + len) + 1);
+    } else if (pos == NULL) {
+		printf("%s Not found\n", substr);
+		return -1;
     }
+    return posit;
 }
 void insert_string(char *destination, const char *source, int position) {
 	int dest_len = strlen(destination);

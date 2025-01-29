@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
+#include "includes/jumble.h"
 #include "includes/obfuscate.h"
 
 int main(int argc, char ** argv) {
@@ -16,7 +17,7 @@ int main(int argc, char ** argv) {
 	char * commands[5] = {
 		"gcc -S %s",
 		"gcc -c %s -o %s",
-		"gcc %s -s -o %s",   // function names stripped here
+		"gcc -no-pie %s -s -o %s",   // function names stripped here
 		"./%s"
 	};
 
@@ -41,20 +42,21 @@ int main(int argc, char ** argv) {
 	obj[strlen(obj)] = 'o';
 	
 	sprintf(buf2, commands[0], file_name);
-	//printf("%s\n", buf2);
+	printf("To assembly\n");
 	system(buf2);
 
 	obfuscate_asm(asm_file, layers);
+	jumble_asm(asm_file);
 
 	sprintf(buf2, commands[1], asm_file, obj);
-	//printf("%s\n", buf2);
+	printf("Assembly to .o file\n");
 	system(buf2);
 
 	sprintf(buf2, commands[2], obj, ELF);
-	//printf("%s\n", buf2);
+	printf(".o file to ELF/executable\n");
 	system(buf2);
 
-	//printf("Done\nTesting...\n");
+	printf("Done\nTesting...\n");
 	sprintf(buf2, commands[3], ELF);
 	system(buf2);
 }
